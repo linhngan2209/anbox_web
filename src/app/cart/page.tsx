@@ -15,19 +15,15 @@ import {
 import { useCart } from '@/contexts/cartContext';
 import Link from 'next/link';
 
-interface CartPageProps {
-    selectedServings?: '1' | '2' | '4';
-}
 
-const CartPage: React.FC<CartPageProps> = ({
-    selectedServings = '2'
-}) => {
+
+const CartPage = () => {
     const { items: cartItems, removeItem } = useCart();
     const [promoCode, setPromoCode] = useState('');
     const [isPromoApplied, setIsPromoApplied] = useState(false);
     const [totalMeals, setTotalMeals] = useState(0);
     const [planName, setPlanName] = useState('');
-
+    const [selectedServings, setSelectedServings] = useState<'1' | '2' | '4'>('2');
     useEffect(() => {
         const savedMaxMeals = localStorage.getItem('weekly_menu_maxMeals');
         if (savedMaxMeals) {
