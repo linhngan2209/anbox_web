@@ -9,106 +9,152 @@ export default function PolicyPage() {
                     Chính Sách Bán Hàng
                 </h1>
 
-                {/* 1. Phạm vi & đối tượng */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
                         1) Phạm vi & đối tượng
                     </h2>
-                    <p>- Phục vụ trước tại nội thành Hà Nội/Hồ Chí Minh (mở rộng theo từng quý).</p>
-                    <p>- Sản phẩm bảo quản mát (chilled 0–4°C) hoặc đông lạnh (frozen ≤ −18°C), kèm hướng dẫn nấu.</p>
+                    <p>
+                        Phục vụ trước tại <strong>nội thành Hà Nội</strong> (Dự kiến mở rộng
+                        sang các khu vực miền Bắc vào năm 2026).
+                    </p>
                 </section>
 
-                {/* 2. Đặt hàng & thời hạn chốt đơn */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
-                        2) Đặt hàng & thời hạn chốt đơn (cut-off)
+                        2) Đặt hàng & thời hạn chốt đơn
                     </h2>
-                    <p>- Bữa lẻ theo ngày:</p>
+                    <p>
+                        Để đảm bảo các nguyên liệu luôn tươi mới và được chuẩn bị đúng thời
+                        gian, khách hàng vui lòng đặt hàng trước theo quy định sau:
+                    </p>
+
+                    <p className="font-medium">Bữa lẻ theo ngày:</p>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>Giao trưa: đặt trước 10h 2 ngày.</li>
-                        <li>Giao tối: đặt trước 18h 2 ngày.</li>
+                        <li>Giao trưa: đặt trước 10h, cách ngày giao 2 ngày.</li>
+                        <li>Giao tối: đặt trước 18h, cách ngày giao 2 ngày.</li>
                     </ul>
-                    <p>- Meal Plan: chọn ngày bắt đầu trước tối thiểu 2 ngày.</p>
-                    <p>- Mọi đơn sau giờ cut-off sẽ được chuyển sang slot kế tiếp.</p>
+
+                    <p>
+                        <strong>Meal Plan:</strong> chọn ngày bắt đầu trước tối thiểu 2
+                        ngày.
+                    </p>
+                    <p>
+                        Các đơn đặt sau thời gian cut-off sẽ tự động được chuyển sang slot
+                        giao kế tiếp.
+                    </p>
                 </section>
 
-                {/* 3. Lịch giao hàng & phí vận chuyển */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
                         3) Lịch giao hàng & phí vận chuyển
                     </h2>
+                    <p>ĂnBox hiện có hai khung giờ giao cố định:</p>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>Slot giao: 9:30-11:30 (trưa), 17:00–19:00 (tối).</li>
-                        <li>Phí ship theo khu vực/trọng lượng; miễn phí nếu đạt ngưỡng giá trị đơn (hiển thị ở trang thanh toán).</li>
-                        <li>Có thể tách giao 2 lần/tuần cho Meal Plan để bảo đảm độ tươi (không phụ phí khi đạt ngưỡng).</li>
+                        <li>Giao trưa: 9h30 – 11h30</li>
+                        <li>Giao tối: 17h00 – 19h00</li>
                     </ul>
+                    <p>
+                        Phí vận chuyển được tính theo khu vực và trọng lượng đơn hàng, hệ
+                        thống sẽ hiển thị rõ tại trang thanh toán. Các đơn đạt ngưỡng giá
+                        trị nhất định sẽ được miễn phí giao hàng.
+                    </p>
+                    <p>
+                        Đối với gói Meal Plan, khách có thể lựa chọn tách giao 2 lần/tuần
+                        để bảo đảm độ tươi ngon của nguyên liệu.
+                    </p>
                 </section>
 
-                {/* 4. Bảo quản & hạn dùng */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
                         4) Bảo quản & hạn dùng
                     </h2>
-                    <p>- Hàng chilled: dùng trong 72-96 giờ; frozen: theo HSD in trên nhãn.</p>
-                    <p>- Bảo quản theo hướng dẫn trên bao bì; không tái đông sau khi rã đông.</p>
+                    <p>Các sản phẩm ĂnBox được chia thành hai loại:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                        <li>
+                            <strong>Hàng chilled (bảo quản mát):</strong> dùng tốt nhất trong
+                            72 – 96 giờ.
+                        </li>
+                        <li>
+                            <strong>Hàng frozen (đông lạnh):</strong> sử dụng theo hạn dùng in
+                            trên nhãn.
+                        </li>
+                    </ul>
+                    <p>
+                        Khách hàng cần bảo quản đúng theo hướng dẫn trên bao bì và không tái
+                        đông sản phẩm sau khi rã đông để đảm bảo chất lượng món ăn.
+                    </p>
                 </section>
 
-                {/* 5. Đổi/hoàn tiền */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
-                        5) Đổi/hoàn tiền (Freshness Guarantee)
+                        5) Đổi/hoàn tiền
                     </h2>
+                    <p>ĂnBox hỗ trợ đổi hoặc hoàn tiền trong các trường hợp:</p>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>Hoàn/đổi khi: rách vỡ bao bì, rã đông/biến chất khi nhận, thiếu thành phần, giao sai SKU.</li>
-                        <li>Thời gian phản hồi: trong 24 giờ kèm ảnh/video lúc mở hộp.</li>
-                        <li>Không áp dụng với trường hợp bảo quản sai hướng dẫn hoặc quá hạn sử dụng.</li>
+                        <li>
+                            Bao bì bị rách, vỡ; sản phẩm rã đông, biến chất khi nhận.
+                        </li>
+                        <li>Thiếu thành phần hoặc giao sai món (SKU).</li>
                     </ul>
+                    <p>
+                        Khách hàng vui lòng phản hồi trong vòng 24 giờ kể từ khi nhận hàng
+                        và gửi kèm ảnh hoặc video lúc mở hộp để ĂnBox xác minh.
+                    </p>
+                    <p>
+                        Chính sách không áp dụng nếu sản phẩm được bảo quản sai hướng dẫn
+                        hoặc đã quá hạn sử dụng.
+                    </p>
                 </section>
 
-                {/* 6. Hủy/đổi lịch */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
                         6) Hủy/đổi lịch
                     </h2>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>Bữa lẻ: cho phép hủy/đổi trước slot 8 giờ.</li>
-                        <li>Meal Plan: cho phép đổi ngày/skip (chi tiết ở mục từng gói); không hủy khi gói đã kích hoạt trừ lý do bất khả kháng.</li>
+                        <li>
+                            <strong>Bữa lẻ:</strong> có thể hủy hoặc đổi slot trước 8 giờ so
+                            với thời gian giao dự kiến.
+                        </li>
+                        <li>
+                            <strong>Meal Plan:</strong> khách có thể đổi ngày hoặc skip theo
+                            quy định của từng gói. Sau khi gói đã được kích hoạt, ĂnBox không
+                            hỗ trợ hủy trừ trường hợp bất khả kháng.
+                        </li>
                     </ul>
                 </section>
 
-                {/* 7. Thanh toán */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
                         7) Thanh toán
                     </h2>
-                    <p>- COD, Chuyển khoản, Thẻ/Ví điện tử (VNPay/Momo/ZaloPay).</p>
-                    <p>- Xuất hóa đơn VAT theo yêu cầu (cung cấp thông tin trước khi chốt đơn).</p>
+                    <p>
+                        ĂnBox chấp nhận các phương thức thanh toán linh hoạt:{" "}
+                        <strong>
+                            Chuyển khoản ngân hàng, thẻ nội địa/quốc tế, ví điện tử (VNPay,
+                            Momo, ZaloPay)
+                        </strong>
+                        .
+                    </p>
+                    <p>
+                        Khách hàng có nhu cầu xuất hóa đơn VAT vui lòng cung cấp thông tin
+                        trước khi chốt đơn để ĂnBox hỗ trợ xuất hóa đơn đúng quy định.
+                    </p>
                 </section>
 
-                {/* 8. Khuyến mãi & mã giảm giá */}
                 <section className="space-y-4">
                     <h2 className="text-3xl font-semibold text-orange-600 mb-2">
-                        8) Khuyến mãi & mã giảm giá
+                        8) Dị ứng & lưu ý sức khỏe
                     </h2>
-                    <p>- Mỗi đơn áp dụng 1 mã; không cộng dồn trừ khi nêu rõ.</p>
-                    <p>- Khuyến mãi Meal Plan khác khuyến mãi bữa lẻ; ưu tiên theo chương trình có lợi nhất cho khách.</p>
-                </section>
-
-                {/* 9. Dị ứng & lưu ý sức khỏe */}
-                <section className="space-y-4">
-                    <h2 className="text-3xl font-semibold text-orange-600 mb-2">
-                        9) Dị ứng & lưu ý sức khỏe
-                    </h2>
-                    <p>- Công bố allergen trên trang sản phẩm (gluten, hải sản, hạt cây, sữa…).</p>
-                    <p>- Khách có yêu cầu kiêng kỵ (không ớt, ít dầu, ăn chay, low-carb…) vui lòng chọn tùy biến khi đặt.</p>
-                </section>
-
-                {/* 10. Bao bì & môi trường */}
-                <section className="space-y-4">
-                    <h2 className="text-3xl font-semibold text-orange-600 mb-2">
-                        10) Bao bì & môi trường
-                    </h2>
-                    <p>- Bao bì an toàn thực phẩm, có thể tái chế; thu hồi đá gel/thùng cách nhiệt theo yêu cầu khi giao lần sau.</p>
+                    <ul className="list-disc list-inside space-y-1">
+                        <li>
+                            Công bố allergen trên trang sản phẩm (gluten, hải sản, hạt cây,
+                            sữa…).
+                        </li>
+                        <li>
+                            Khách có yêu cầu kiêng kỵ (không ớt, ít dầu, ăn chay, low-carb…)
+                            vui lòng chọn tùy biến khi đặt.
+                        </li>
+                    </ul>
                 </section>
             </div>
         </div>

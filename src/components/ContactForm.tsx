@@ -13,7 +13,6 @@ export default function ContactPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', form);
     setForm({ name: '', email: '', message: '' });
     alert('Cảm ơn bạn! ĂNBOX đã nhận được tin nhắn của bạn ❤️');
   };
@@ -97,7 +96,7 @@ export default function ContactPage() {
                   <Instagram className="w-5 h-5" />
                 </Link>
                 <Link
-                  href="https://www.tiktok.com/"
+                  href=" https://www.tiktok.com/@anbox.vn"
                   target="_blank"
                   className="p-2 bg-orange-100 text-orange-500 rounded-full hover:bg-orange-500 hover:text-white transition-colors"
                   aria-label="TikTok"

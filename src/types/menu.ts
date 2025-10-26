@@ -33,6 +33,8 @@ export interface Recipe {
         time: string;
         difficulty: string;
     };
+    price: number,
+    sold?: number,
 }
 
 export interface WeeklyMenu {

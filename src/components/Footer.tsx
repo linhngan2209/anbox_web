@@ -9,14 +9,13 @@ const Footer = () => {
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Đăng ký email:', email);
     setEmail('');
   };
 
   const quickLinks = [
     { label: 'Gói Ăn', href: '/plan-detail' },
-    { label: 'Cách Thức Hoạt Động', href: '/#how-it-works' },
-    { label: 'Công Thức', href: '#recipes' },
+    { label: 'Quy trình đặt hàng', href: '/howitwork' },
+    { label: 'Thực đơn', href: '/menu' },
     { label: 'Về Chúng Tôi', href: 'about' }
   ];
 

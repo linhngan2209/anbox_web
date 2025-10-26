@@ -1,101 +1,135 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Flame, TrendingUp, Star } from 'lucide-react';
 import Image from 'next/image';
+import { Recipe } from '@/types/menu';
+import { RecipeModal } from '../Recipe/RecipeModal';
+import { useCart } from '@/contexts/cartContext';
+import { useAuth } from '@/contexts/auth';
+import toast from 'react-hot-toast';
 
-interface Dish {
-    title: string;
-    description: string;
-    image: string;
-    badge: {
-        label: string;
-        icon: React.ElementType;
-        bgColor: string;
-        borderColor: string;
-    };
+interface TrendingThisWeekProps {
+    dishes?: Recipe[];
 }
 
-const TrendingThisWeek = () => {
-    const dishes: Dish[] = [
+const TrendingThisWeek = ({ dishes = [] }: TrendingThisWeekProps) => {
+    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+    const { addItem } = useCart();
+    const { isAuthenticated } = useAuth();
+
+    const badges = [
         {
-            title: 'Bò Lúc Lắc',
-            description: "Bò lúc lắc sốt đặc trưng, mềm thơm",
-            image: 'https://res.cloudinary.com/drri9iwmc/image/upload/v1761124698/r3reuna8zf0irqns9kp1.jpg',
-            badge: {
-                label: 'Hot',
-                icon: Flame,
-                bgColor: 'bg-yellow-600',
-                borderColor: 'border-yellow-600'
-            }
+            label: 'Hot',
+            icon: Flame,
+            bgColor: 'bg-yellow-600',
+            borderColor: 'border-yellow-600'
         },
         {
-            title: 'Salad Tôm',
-            description: "Salad tôm tươi ngon, ăn kèm rau xanh",
-            image: "https://res.cloudinary.com/drri9iwmc/image/upload/v1761124920/oxknwj3848niathoqdcs.jpg", badge: {
-                label: 'Rising',
-                icon: TrendingUp,
-                bgColor: 'bg-green-600',
-                borderColor: 'border-green-600'
-            }
+            label: 'Rising',
+            icon: TrendingUp,
+            bgColor: 'bg-green-600',
+            borderColor: 'border-green-600'
         },
         {
-            title: 'Gà Xào Nấm',
-            description: 'Gà xào nấm mềm thơm, đậm vị',
-            image: "https://res.cloudinary.com/drri9iwmc/image/upload/v1761056350/po3xykc3etpn9fgh2m5p.jpg",
-            badge: {
-                label: 'Top',
-                icon: Star,
-                bgColor: 'bg-orange-500',
-                borderColor: 'border-orange-500'
-            }
+            label: 'Top',
+            icon: Star,
+            bgColor: 'bg-orange-500',
+            borderColor: 'border-orange-500'
         }
     ];
 
+    const handleDishClick = (dish: Recipe) => {
+        setSelectedRecipe(dish);
+    };
+
+    const handleAddToCart = (recipe: Recipe, servings: '1' | '2' | '4') => {
+        if (!isAuthenticated) {
+            toast.error('Vui lòng đăng nhập để thêm món ăn vào giỏ hàng');
+        } else {
+            addItem({
+                itemId: recipe._id,
+                name: recipe.name,
+                category: recipe.category,
+                url: recipe.url,
+                quantity: 1,
+                servings,
+                type: 'dish',
+                price: recipe.price * parseInt(servings),
+            });
+        }
+    };
+
+    // Lấy tối đa 3 món trending
+    const displayDishes = dishes.slice(0, 3);
+
+    // Nếu không có data, không hiển thị section
+    if (displayDishes.length === 0) {
+        return null;
+    }
+
     return (
-        <section id="trending" className="py-20 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                        Xu Hướng Tuần Này
-                    </h2>
-                    <p className="text-xl text-gray-600">
-                        Những món ăn được cộng đồng yêu thích nhất
-                    </p>
+        <>
+            <section id="trending" className="py-20 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                            Xu Hướng Tuần Này
+                        </h2>
+                        <p className="text-xl text-gray-600">
+                            Những món ăn được cộng đồng yêu thích nhất
+                        </p>
+                    </div>
 
-                </div>
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
+                        {displayDishes.map((dish, index) => {
+                            const badge = badges[index] || badges[0];
+                            const BadgeIcon = badge.icon;
 
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                    {dishes.map((dish, index) => {
-                        const BadgeIcon = dish.badge.icon;
-                        return (
-                            <div
-                                key={index}
-                                className={`relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden border-2 ${dish.badge.borderColor}`}
-                            >
-                                <div className={`absolute top-4 right-4 ${dish.badge.bgColor} text-white px-3 py-1 rounded-full text-sm font-semibold z-10 flex items-center gap-1`}>
-                                    <BadgeIcon className="w-4 h-4" />
-                                    {dish.badge.label}
+                            return (
+                                <div
+                                    key={dish._id || index}
+                                    onClick={() => handleDishClick(dish)}
+                                    className={`relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden border-2 ${badge.borderColor} cursor-pointer group transform hover:scale-105`}
+                                >
+                                    <div className={`absolute top-4 right-4 ${badge.bgColor} text-white px-3 py-1 rounded-full text-sm font-semibold z-10 flex items-center gap-1`}>
+                                        <BadgeIcon className="w-4 h-4" />
+                                        {badge.label}
+                                    </div>
+                                    <div className="relative w-full h-56 overflow-hidden">
+                                        <Image
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            src={dish.url}
+                                            alt={dish.name}
+                                            width={400}
+                                            height={224}
+                                        />
+                                    </div>
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                                            {dish.name}
+                                        </h3>
+                                        <p className="text-gray-600 mb-3">
+                                            {dish.info?.time && `⏱️ ${dish.info.time}`}
+                                            {dish.info?.difficulty && ` • ${dish.info.difficulty}`}
+                                        </p>
+                                        <p className="text-sm text-orange-600 font-medium group-hover:text-orange-700 transition-colors">
+                                            Xem chi tiết →
+                                        </p>
+                                    </div>
                                 </div>
-                                <Image
-                                    className="w-full h-56 object-cover"
-                                    src={dish.image}
-                                    alt={`Vietnamese ${dish.title.toLowerCase()} - ${dish.description}`}
-                                    width={400}
-                                    height={224}
-                                />
-                                <div className="p-6">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                                        {dish.title}
-                                    </h3>
-                                    <p className="text-gray-600">
-                                        {dish.description}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <RecipeModal
+                recipe={selectedRecipe}
+                onClose={() => setSelectedRecipe(null)}
+                onAddToCart={handleAddToCart}
+            />
+        </>
     );
 };
 

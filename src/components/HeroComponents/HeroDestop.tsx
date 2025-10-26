@@ -3,19 +3,20 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface HeroProps {
-    onCTAClick?: () => void;
-}
+export default function Hero() {
+    const onCTAClick = () => {
+        const planSection = document.getElementById('meal-plans');
+        if (planSection) {
+            planSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
-export default function Hero({ onCTAClick }: HeroProps) {
     return (
         <section id="hero" className="relative h-[700px] overflow-hidden">
-            {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-black/30 z-10"></div>
 
-            {/* Background image */}
             <Image
-                src="/hero.jpg"
+                src="/hero_section.png"
                 alt="Hộp ăn Việt với nguyên liệu tươi ngon"
                 fill
                 priority
@@ -23,7 +24,6 @@ export default function Hero({ onCTAClick }: HeroProps) {
                 quality={90}
             />
 
-            {/* Content */}
             <div className="relative z-20 max-w-7xl mx-auto px-6 h-full flex items-center">
                 <div className="text-white max-w-2xl">
                     <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -31,8 +31,9 @@ export default function Hero({ onCTAClick }: HeroProps) {
                     </h1>
 
                     <p className="text-lg md:text-xl mb-8 text-gray-200 leading-relaxed">
-                        Hộp nguyên liệu nấu ăn trọn gói với công thức chuẩn đầu bếp – giao tận nơi,
-                        giúp bạn nấu nhanh món ngon tại nhà trong <span className="font-semibold text-yellow-300">15 phút</span>.
+                        Hộp nguyên liệu nấu ăn trọn gói với công thức chuẩn đầu bếp – giao tận nơi, giúp bạn nấu
+                        nhanh món ngon tại nhà trong{' '}
+                        <span className="font-semibold text-yellow-300">15 phút</span>.
                     </p>
 
                     <button

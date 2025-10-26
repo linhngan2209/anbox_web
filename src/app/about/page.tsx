@@ -3,12 +3,11 @@ import Image from "next/image";
 
 export default function AboutPage() {
   return (
-    <div className="bg-[#FFF8F2] text-gray-800">
+    <div className="bg-[#FFF8F2] text-gray-800" >
 
-      {/* Hero Section */}
       <section className="relative w-full h-[400px]">
         <Image
-          src="/about-hero.jpg"
+          src="/about_us.jpg"
           alt="Ảnh về ĂnBox"
           fill
           className="object-cover"
@@ -23,59 +22,61 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Giá trị cốt lõi */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-4xl font-bold text-center text-orange-600 mb-12">
           Giá trị cốt lõi của ĂnBox
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mb-10">
+          <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
             <h3 className="text-2xl font-semibold text-orange-600 mb-3">
               Công thức đáng tin cậy
             </h3>
-            <p>
+            <p className="text-gray-700 leading-relaxed">
               Cam kết mang đến những bữa ăn tiện lợi, tiết kiệm thời gian, phù hợp với lối sống bận rộn và ngân sách của mỗi gia đình Việt.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
             <h3 className="text-2xl font-semibold text-orange-600 mb-3">
               Nguyên liệu tươi sạch
             </h3>
-            <p>
+            <p className="text-gray-700 leading-relaxed">
               Chọn lọc nguyên liệu đạt chuẩn, được sơ chế kỹ lưỡng và chia khẩu phần chính xác để giữ trọn vị ngon và dinh dưỡng.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-transform duration-300">
             <h3 className="text-2xl font-semibold text-orange-600 mb-3">
               Đa dạng món ngon
             </h3>
-            <p>
+            <p className="text-gray-700 leading-relaxed">
               Mang đến thực đơn phong phú, nhiều lựa chọn món ăn thuần Việt với công thức từ đầu bếp, giúp việc nấu ăn tại nhà luôn mới mẻ và thú vị.
             </p>
           </div>
+        </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow">
+        <div className="flex justify-center gap-10 flex-wrap">
+          <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-transform duration-300 max-w-sm w-full sm:w-auto">
             <h3 className="text-2xl font-semibold text-orange-600 mb-3">
               Giải pháp bền vững
             </h3>
-            <p>
+            <p className="text-gray-700 leading-relaxed">
               Giảm thiểu lãng phí thực phẩm, hướng đến thói quen ăn uống lành mạnh và bền vững hơn cho bạn và môi trường.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="bg-white p-6 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition-transform duration-300 max-w-sm w-full sm:w-auto">
             <h3 className="text-2xl font-semibold text-orange-600 mb-3">
               Trọn vẹn yêu thương
             </h3>
-            <p>
+            <p className="text-gray-700 leading-relaxed">
               Giúp các gia đình và cá nhân tìm lại niềm vui bên mâm cơm nhà — nơi mỗi bữa ăn không chỉ là dinh dưỡng mà còn là sự sẻ chia và kết nối.
             </p>
           </div>
         </div>
       </section>
+
 
       {/* Câu chuyện của ĂnBox */}
       <section className="bg-orange-50 py-16 px-6">

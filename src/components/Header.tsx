@@ -26,16 +26,22 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="rounded-lg overflow-hidden w-26 h-10">
-              <img src="/logo.png" alt="ĂNBOX Logo" className="w-full h-full object-contain" />
-            </div>
+            <Link href="/" className="flex items-center">
+              <div className="rounded-lg overflow-hidden w-26 h-10">
+                <img
+                  src="/logo.png"
+                  alt="ĂNBOX Logo"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </Link>
           </div>
 
 
           <nav className="hidden lg:flex items-center space-x-8 relative">
             <Link href="/" className={linkClass('/')}>Trang chủ</Link>
             <Link href="/about" className={linkClass('/about')}>Về chúng tôi</Link>
-
+            <Link href="/howitwork" className={linkClass('/howitwork')}>Quy trình đặt hàng</Link>
             <div
               className="relative group"
               onMouseEnter={() => setIsMenuOpen(true)}
@@ -54,15 +60,14 @@ export default function Header() {
               >
                 <Link href="/menu" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors">Thực đơn cố định</Link>
                 <Link href="/menu-upcoming" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors">Thực đơn sắp tới</Link>
+                <Link href="/product" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors">Sản phẩm bán thêm</Link>
               </div>
             </div>
 
             <Link href="/contact" className={linkClass('/contact')}>Liên hệ</Link>
           </nav>
 
-          {/* Right Side (Desktop) */}
           <div className="hidden lg:flex items-center space-x-6 relative">
-            {/* 🛒 Cart with dynamic badge */}
             <Link href="/cart" className="relative text-gray-700 hover:text-orange-500 transition-colors">
               <ShoppingCart className="w-6 h-6" />
               {totalItems > 0 && (
@@ -72,7 +77,6 @@ export default function Header() {
               )}
             </Link>
 
-            {/* 👤 User menu */}
             {!user ? (
               <Link href="/login" className="text-gray-700 hover:text-orange-500 transition-colors font-medium">Đăng nhập</Link>
             ) : (
@@ -89,7 +93,7 @@ export default function Header() {
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
                     <Link href="/account" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500">Chỉnh sửa tài khoản</Link>
-                    <Link href="/orders" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500">Lịch sử mua hàng</Link>
+                    <Link href="/history" className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500">Lịch sử mua hàng</Link>
                     <button
                       onClick={logout}
                       className="w-full text-left px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500"
@@ -102,7 +106,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden text-gray-700 hover:text-orange-500 transition-colors"
@@ -111,12 +114,13 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4 mt-4">
               <Link href="/" className={linkClass('/')}>Trang chủ</Link>
               <Link href="/about" className={linkClass('/about')}>Về chúng tôi</Link>
+              <Link href="/howitwork" className={linkClass('/howitwork')}>Quy trình đặt hàng</Link>
+
               <Link href="/menu" className={linkClass('/menu')}>Thực đơn</Link>
               <Link href="/menu-upcoming" className={linkClass('/menu-upcoming')}>Thực đơn sắp tới</Link>
               <Link href="/contact" className={linkClass('/contact')}>Liên hệ</Link>

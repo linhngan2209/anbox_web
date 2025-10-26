@@ -10,20 +10,24 @@ import {
     ChefHat,
     ArrowRight,
     Gift,
-    Tag
+    Tag,
+    AlertCircle
 } from 'lucide-react';
-import { useCart } from '@/contexts/cartContext';
 import Link from 'next/link';
-
-
+import { useRouter } from 'next/navigation';
+import { useCart } from '@/contexts/cartContext';
+import { useAuth } from '@/contexts/auth';
+import toast from 'react-hot-toast';
 
 const CartPage = () => {
-    const { items: cartItems, removeItem } = useCart();
+    const router = useRouter();
+    const { items: cartItems, removeItem, updateQuantity, clearCart } = useCart();
+    const { isAuthenticated } = useAuth();
     const [promoCode, setPromoCode] = useState('');
     const [isPromoApplied, setIsPromoApplied] = useState(false);
     const [totalMeals, setTotalMeals] = useState(0);
     const [planName, setPlanName] = useState('');
-    const [selectedServings, setSelectedServings] = useState<'1' | '2' | '4'>('2');
+
     useEffect(() => {
         const savedMaxMeals = localStorage.getItem('weekly_menu_maxMeals');
         if (savedMaxMeals) {
@@ -31,11 +35,11 @@ const CartPage = () => {
             setTotalMeals(mealsCount);
 
             switch (mealsCount) {
-                case 3:
-                    setPlanName('Gói Ăn ngon 3 ngày');
-                    break;
                 case 1:
                     setPlanName('Gói Ăn nhanh mỗi ngày');
+                    break;
+                case 3:
+                    setPlanName('Gói Ăn ngon 3 ngày');
                     break;
                 case 7:
                     setPlanName('Gói Ăn ngon trọn tuần');
@@ -46,18 +50,18 @@ const CartPage = () => {
         }
     }, []);
 
-    const servingsOptions = [
-        { value: '1', label: '1 người', pricePerMeal: 45000 },
-        { value: '2', label: '2 người', pricePerMeal: 65000 },
-        { value: '4', label: '4 người', pricePerMeal: 115000 }
-    ];
+    const dishItems = cartItems.filter(i => i.type === 'dish');
+    const applianceItems = cartItems.filter(i => i.type === 'appliance');
 
-    const selectedServingOption = servingsOptions.find(
-        (opt) => opt.value === selectedServings
+    const subtotalDish = dishItems.reduce(
+        (sum, item) => sum + (item.price || 0) * item.quantity,
+        0
     );
-    const pricePerMeal = selectedServingOption?.pricePerMeal || 0;
-
-    const subtotal = cartItems.length * pricePerMeal;
+    const subtotalAppliance = applianceItems.reduce(
+        (sum, item) => sum + (item.price || 0) * item.quantity,
+        0
+    );
+    const subtotal = subtotalDish + subtotalAppliance;
     const discount = isPromoApplied ? subtotal * 0.05 : 0;
     const shippingFee = subtotal > 500000 ? 0 : 30000;
     const total = subtotal - discount + shippingFee;
@@ -65,7 +69,41 @@ const CartPage = () => {
     const applyPromoCode = () => {
         if (promoCode.toLowerCase() === 'welcome') {
             setIsPromoApplied(true);
+            toast.success('Áp dụng mã giảm giá thành công!');
+        } else {
+            toast.error('Mã giảm giá không hợp lệ!');
         }
+    };
+
+    const handleCheckout = () => {
+        if (!isAuthenticated) {
+            toast.error('Vui lòng đăng nhập để thanh toán');
+            router.push('/login');
+            return;
+        }
+
+        if (cartItems.length === 0) {
+            toast.error('Giỏ hàng trống. Vui lòng thêm sản phẩm!');
+            return;
+        }
+
+        // Lưu thông tin đơn hàng vào localStorage để dùng ở trang checkout
+        const orderData = {
+            items: cartItems,
+            subtotalDish,
+            subtotalAppliance,
+            subtotal,
+            discount,
+            shippingFee,
+            total,
+            promoCode: isPromoApplied ? promoCode : null,
+            planName,
+            totalMeals,
+            timestamp: Date.now()
+        };
+
+        localStorage.setItem('checkout_order', JSON.stringify(orderData));
+        router.push('/checkout');
     };
 
     return (
@@ -79,104 +117,173 @@ const CartPage = () => {
                         </h1>
                     </div>
                     <p className="text-gray-600">
-                        Kiểm tra lại các món ăn bạn đã chọn trước khi thanh toán
+                        Kiểm tra lại các sản phẩm bạn đã chọn trước khi thanh toán
                     </p>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-bold text-gray-800">
-                                Món ăn đã chọn ({cartItems.length}/{totalMeals})
-                            </h2>
-                        </div>
-
-                        {cartItems.length === 0 ? (
-                            <div className="text-center py-12">
-                                <div className="text-6xl mb-4">🛒</div>
-                                <p className="text-gray-600 mb-2">
-                                    Giỏ hàng trống. Hãy thêm món ăn vào nhé!
-                                </p>
-                                {totalMeals > 0 && (
-                                    <p className="text-sm text-orange-600">
-                                        Bạn đã chọn {planName}, cần thêm {totalMeals} món
-                                    </p>
+                    {/* Left Column - Cart Items */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="bg-white rounded-2xl shadow-lg p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-gray-800">
+                                    Sản phẩm đã chọn ({cartItems.length})
+                                </h2>
+                                {cartItems.length > 0 && (
+                                    <button
+                                        onClick={() => {
+                                            if (window.confirm('Bạn có chắc muốn xóa tất cả sản phẩm?')) {
+                                                clearCart();
+                                                toast.success('Đã xóa tất cả sản phẩm');
+                                            }
+                                        }}
+                                        className="text-sm text-red-600 hover:text-red-700 font-medium"
+                                    >
+                                        Xóa tất cả
+                                    </button>
                                 )}
                             </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {cartItems.map((item: any, index: any) => (
-                                    <div
-                                        key={item.id || index}
-                                        className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-                                    >
-                                        <img
-                                            src={item.url}
-                                            alt={item.name}
-                                            className="w-24 h-24 object-cover rounded-lg"
-                                        />
-                                        <div className="flex-1">
-                                            <h3 className="font-bold text-gray-800 mb-2">
-                                                {item.name}
-                                            </h3>
-                                            <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-                                                <div className="flex items-center gap-1">
-                                                    <Users className="w-4 h-4" />
-                                                    {item.servings} người
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Clock className="w-4 h-4" />
-                                                    {item.time}
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <ChefHat className="w-4 h-4" />
-                                                    {item.calories}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => removeItem(item.recipeId)}
-                                            className="p-2 h-10 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                ))}
 
-                                {cartItems.length < totalMeals && (
-                                    <Link href="/menu" passHref>
-                                        <button className="w-full py-4 border-2 border-dashed border-orange-300 rounded-xl text-orange-600 font-semibold hover:bg-orange-50 transition-colors">
-                                            <Plus className="w-5 h-5 inline mr-2" />
-                                            Thêm món ăn ({cartItems.length}/{totalMeals})
+                            {cartItems.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <div className="text-6xl mb-4">🛒</div>
+                                    <h3 className="text-xl font-bold text-gray-800 mb-2">
+                                        Giỏ hàng trống
+                                    </h3>
+                                    <p className="text-gray-600 mb-6">
+                                        Hãy thêm món ăn yêu thích vào giỏ hàng nhé!
+                                    </p>
+                                    <Link href="/menu">
+                                        <button className="px-6 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors">
+                                            Khám phá thực đơn
                                         </button>
                                     </Link>
-                                )}
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {cartItems.map((item: any, index: any) => (
+                                        <div
+                                            key={`${item.itemId}-${index}`}
+                                            className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-2 border-transparent hover:border-orange-200"
+                                        >
+                                            <img
+                                                src={item.url}
+                                                alt={item.name}
+                                                className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                                            />
+
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="font-bold text-gray-800 mb-2 truncate">
+                                                    {item.name}
+                                                </h3>
+
+                                                <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-2">
+                                                    {item.type === 'dish' ? (
+                                                        <>
+                                                            <div className="flex items-center gap-1">
+                                                                <Users className="w-4 h-4" />
+                                                                {item.servings} người
+                                                            </div>
+                                                            {item.category && (
+                                                                <div className="flex items-center gap-1">
+                                                                    <ChefHat className="w-4 h-4" />
+                                                                    {item.category === 'meat' ? 'Món thịt' : 'Món rau'}
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex items-center gap-2 text-blue-600 font-medium">
+                                                            <Tag className="w-4 h-4" />
+                                                            <span>Đồ gia dụng</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <p className="text-orange-600 font-bold text-lg">
+                                                    {(item.price || 0).toLocaleString('vi-VN')}đ
+                                                </p>
+                                            </div>
+
+                                            <div className="flex flex-col justify-between items-end">
+                                                {item.type === 'appliance' && (
+                                                    <div className="flex items-center border-2 border-gray-300 rounded-lg">
+                                                        <button
+                                                            onClick={() =>
+                                                                item.quantity > 1 &&
+                                                                updateQuantity(item.itemId, item.type, item.quantity - 1)
+                                                            }
+                                                            className="px-3 py-2 text-gray-600 hover:bg-gray-200 transition-colors"
+                                                            disabled={item.quantity <= 1}
+                                                        >
+                                                            −
+                                                        </button>
+                                                        <span className="px-4 font-semibold text-gray-700">
+                                                            {item.quantity}
+                                                        </span>
+                                                        <button
+                                                            onClick={() =>
+                                                                updateQuantity(item.itemId, item.type, item.quantity + 1)
+                                                            }
+                                                            className="px-3 py-2 text-gray-600 hover:bg-gray-200 transition-colors"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                <button
+                                                    onClick={() => {
+                                                        removeItem(item.itemId, item.type);
+                                                        toast.success('Đã xóa sản phẩm');
+                                                    }}
+                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Xóa sản phẩm"
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <Link href="/menu" passHref>
+                                        <button className="w-full py-4 border-2 border-dashed border-orange-300 rounded-xl text-orange-600 font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2">
+                                            <Plus className="w-5 h-5" />
+                                            Tiếp tục chọn món
+                                        </button>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Plan Info */}
+                        {planName && dishItems.length > 0 && (
+                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border-2 border-blue-200">
+                                <div className="flex items-start gap-3">
+                                    <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                                    <div>
+                                        <h3 className="font-bold text-blue-900 mb-2">{planName}</h3>
+                                        <p className="text-sm text-blue-800">
+                                            Bạn đã chọn <span className="font-bold">{dishItems.length}/{totalMeals}</span> món ăn cho gói này
+                                        </p>
+                                        {dishItems.length < totalMeals && (
+                                            <p className="text-sm text-blue-700 mt-1">
+                                                Còn thiếu {totalMeals - dishItems.length} món nữa để đủ gói
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
 
+                    {/* Right Column - Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
                             <h2 className="text-xl font-bold text-gray-800 mb-6">
                                 Tóm tắt đơn hàng
                             </h2>
 
-                            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 mb-6">
-                                <div className="flex items-center gap-2 text-orange-700 font-semibold mb-3">
-                                    <Gift className="w-5 h-5" />
-                                    {planName || 'Gói ẩn'}
-                                </div>
-                                <div className="text-sm text-gray-700 space-y-1">
-                                    <div>{cartItems.length}/{totalMeals} món đã chọn</div>
-                                    <div>{selectedServingOption?.label || selectedServings + ' người'}/phần</div>
-                                </div>
-                                {cartItems.length < totalMeals && (
-                                    <div className="mt-3 text-xs text-orange-600 bg-white/50 px-3 py-2 rounded-lg">
-                                        Còn thiếu {totalMeals - cartItems.length} món
-                                    </div>
-                                )}
-                            </div>
-
+                            {/* Promo Code */}
                             <div className="mb-6">
                                 <div className="flex gap-2">
                                     <div className="flex-1 relative">
@@ -191,40 +298,49 @@ const CartPage = () => {
                                     </div>
                                     <button
                                         onClick={applyPromoCode}
-                                        className="px-6 py-3 bg-gray-800 text-white rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+                                        disabled={!promoCode}
+                                        className="px-6 py-3 bg-gray-800 text-white rounded-xl font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Áp dụng
                                     </button>
                                 </div>
                                 {isPromoApplied && (
-                                    <div className="mt-2 text-sm text-green-600 flex items-center gap-1">
+                                    <div className="mt-2 text-sm text-green-600 flex items-center gap-1 bg-green-50 p-2 rounded-lg">
                                         <Tag className="w-4 h-4" />
                                         Đã áp dụng mã giảm 5%
                                     </div>
                                 )}
                             </div>
 
+                            {/* Price Breakdown */}
                             <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
-                                <div className="flex justify-between text-gray-600">
-                                    <span>Tạm tính ({cartItems.length} món)</span>
-                                    <span>{subtotal.toLocaleString('vi-VN')}đ</span>
-                                </div>
+                                {dishItems.length > 0 && (
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>Món ăn ({dishItems.length})</span>
+                                        <span>{subtotalDish.toLocaleString('vi-VN')}đ</span>
+                                    </div>
+                                )}
+                                {applianceItems.length > 0 && (
+                                    <div className="flex justify-between text-gray-600">
+                                        <span>Đồ gia dụng ({applianceItems.length})</span>
+                                        <span>{subtotalAppliance.toLocaleString('vi-VN')}đ</span>
+                                    </div>
+                                )}
                                 {discount > 0 && (
-                                    <div className="flex justify-between text-green-600">
-                                        <span>Giảm giá</span>
+                                    <div className="flex justify-between text-green-600 font-semibold">
+                                        <span>Giảm giá (5%)</span>
                                         <span>-{discount.toLocaleString('vi-VN')}đ</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between text-gray-600">
                                     <span>Phí vận chuyển</span>
-                                    <span>
-                                        {shippingFee === 0
-                                            ? 'Miễn phí'
-                                            : `${shippingFee.toLocaleString('vi-VN')}đ`}
+                                    <span className={shippingFee === 0 ? 'text-green-600 font-semibold' : ''}>
+                                        {shippingFee === 0 ? 'Miễn phí' : `${shippingFee.toLocaleString('vi-VN')}đ`}
                                     </span>
                                 </div>
                             </div>
 
+                            {/* Total */}
                             <div className="flex justify-between items-center mb-6">
                                 <span className="text-xl font-bold text-gray-800">
                                     Tổng cộng
@@ -234,26 +350,36 @@ const CartPage = () => {
                                 </span>
                             </div>
 
+                            {/* Checkout Button */}
                             <button
-                                disabled={cartItems.length < totalMeals}
-                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all transform shadow-lg mb-4 ${cartItems.length < totalMeals
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700 hover:scale-105'
-                                    }`}
+                                onClick={handleCheckout}
+                                disabled={cartItems.length === 0}
+                                className="w-full py-4 rounded-xl font-bold text-lg transition-all transform shadow-lg mb-4 bg-gradient-to-r from-orange-600 to-red-600 text-white hover:from-orange-700 hover:to-red-700 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                             >
-                                {cartItems.length < totalMeals
-                                    ? `Cần thêm ${totalMeals - cartItems.length} món`
-                                    : 'Thanh toán'
-                                }
-                                {cartItems.length >= totalMeals && (
-                                    <ArrowRight className="inline ml-2 w-5 h-5" />
-                                )}
+                                Thanh toán
+                                <ArrowRight className="w-5 h-5" />
                             </button>
 
-                            {shippingFee > 0 && (
-                                <div className="text-center text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
-                                    Mua thêm {(500000 - subtotal).toLocaleString('vi-VN')}đ để
-                                    được miễn phí ship
+                            {/* Free Shipping Progress */}
+                            {shippingFee > 0 && subtotal > 0 && (
+                                <div className="text-center text-sm bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <p className="text-blue-800">
+                                        Mua thêm <span className="font-bold text-blue-900">
+                                            {(500000 - subtotal).toLocaleString('vi-VN')}đ
+                                        </span> để được miễn phí ship
+                                    </p>
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div
+                                            className="bg-blue-600 h-2 rounded-full transition-all"
+                                            style={{ width: `${Math.min((subtotal / 500000) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {cartItems.length === 0 && (
+                                <div className="text-center text-sm text-gray-500 p-4 bg-gray-50 rounded-lg">
+                                    Giỏ hàng trống. Thêm sản phẩm để thanh toán
                                 </div>
                             )}
                         </div>

@@ -3,13 +3,14 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { toast } from 'react-hot-toast';
 
 export type CartItem = {
-    recipeId: string;
+    itemId: string;
     name: string;
-    category: string;
+    category?: string;
     url: string;
     quantity: number;
-    servings: '1' | '2' | '4';
+    servings?: '1' | '2' | '4';
     price?: number;
+    type: 'dish' | 'appliance';
 };
 
 type CartContextType = {
@@ -17,8 +18,8 @@ type CartContextType = {
     maxMeals: number;
     setMaxMeals: (num: number) => void;
     addItem: (item: CartItem) => void;
-    removeItem: (recipeId: string) => void;
-    updateQuantity: (recipeId: string, quantity: number) => void;
+    removeItem: (itemId: string, type: 'dish' | 'appliance') => void;
+    updateQuantity: (itemId: string, type: 'dish' | 'appliance', quantity: number) => void;
     clearCart: () => void;
 };
 
@@ -33,14 +34,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         setIsClient(true);
     }, []);
 
-    useEffect(() => {
-        if (isClient) {
-            const savedItems = localStorage.getItem('weekly_menu_cart');
-            const savedMax = localStorage.getItem('weekly_menu_maxMeals');
-            if (savedItems) setItems(JSON.parse(savedItems));
-            if (savedMax) setMaxMeals(parseInt(savedMax));
-        }
-    }, [isClient]);
 
     useEffect(() => {
         if (isClient) {
@@ -49,31 +42,42 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [items, maxMeals, isClient]);
 
+
     const addItem = (item: CartItem) => {
-        if (items.length >= maxMeals) {
-            toast.error(`Bạn chỉ có thể chọn tối đa ${maxMeals} món`);
+        if (item.type === 'dish' && items.filter(i => i.type === 'dish').length >= maxMeals) {
+            toast.error(`Bạn chỉ có thể chọn tối đa ${maxMeals} món ăn`);
             return;
         }
-        const isExisting = items.some((i) => i.recipeId === item.recipeId);
+
+        const isExisting = items.some(i => i.itemId === item.itemId && i.type === item.type);
         if (isExisting) {
-            toast.error(`Món "${item.name}" đã có trong giỏ hàng!`);
+            toast.error(`"${item.name}" đã có trong giỏ hàng!`);
             return;
         }
-        setItems([...items, item]);
+
+        setItems(prev => [...prev, item]);
         toast.success(`Đã thêm ${item.name} vào giỏ hàng!`);
     };
 
-    const removeItem = (recipeId: string) => {
-        setItems((prev) => prev.filter((i) => i.recipeId !== recipeId));
+    const removeItem = (itemId: string, type: 'dish' | 'appliance') => {
+        setItems(prev => prev.filter(i => !(i.itemId === itemId && i.type === type)));
+        toast.success('Đã xóa sản phẩm khỏi giỏ hàng');
     };
 
-    const updateQuantity = (recipeId: string, quantity: number) => {
-        setItems((prev) =>
-            prev.map((i) => (i.recipeId === recipeId ? { ...i, quantity } : i))
+    const updateQuantity = (itemId: string, type: 'dish' | 'appliance', quantity: number) => {
+        setItems(prev =>
+            prev.map(i =>
+                i.itemId === itemId && i.type === type
+                    ? { ...i, quantity }
+                    : i
+            )
         );
     };
 
-    const clearCart = () => setItems([]);
+    const clearCart = () => {
+        setItems([]);
+        toast.success('Đã xóa toàn bộ giỏ hàng');
+    };
 
     return (
         <CartContext.Provider

@@ -28,7 +28,7 @@ export function PlanCard({
 }: PlanCardProps) {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
-    const { clearCart } = useCart();
+    const { clearCart, setMaxMeals } = useCart();
 
     const handleChoosePlan = () => {
         if (!isAuthenticated) {
@@ -39,10 +39,9 @@ export function PlanCard({
 
         try {
             clearCart();
-
+            setMaxMeals(maxMeals);
             localStorage.removeItem('weekly_menu_cart');
             localStorage.removeItem('weekly_menu_maxMeals');
-
             localStorage.setItem('weekly_menu_maxMeals', maxMeals.toString());
 
             toast.success(`Đã chọn gói ${title} (${maxMeals} món)`);
@@ -50,7 +49,6 @@ export function PlanCard({
             if (onChoosePlan) {
                 onChoosePlan();
             }
-
             router.push('/menu');
         } catch (error) {
             toast.error('Có lỗi xảy ra, vui lòng thử lại');
