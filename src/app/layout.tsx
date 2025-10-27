@@ -38,11 +38,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        <AuthProvider>
-          <CartProvider>
+        <CartProvider>
+          <AuthProvider>
+
             <ClientLayout>{children}</ClientLayout>
-          </CartProvider>
-        </AuthProvider>
+
+          </AuthProvider>
+        </CartProvider>
       </body>
     </html>
   );
