@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
-import { Loader2 } from 'lucide-react';
 
 import HeroSection from '@/components/HeroComponents/HeroSection';
 import MealPlans from '@/components/Plans/MealCard';

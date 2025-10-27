@@ -35,13 +35,13 @@ const CartPage = () => {
             setTotalMeals(mealsCount);
 
             switch (mealsCount) {
-                case 1:
+                case 100:
                     setPlanName('Gói Ăn nhanh mỗi ngày');
                     break;
-                case 3:
+                case 12:
                     setPlanName('Gói Ăn ngon 3 ngày');
                     break;
-                case 7:
+                case 25:
                     setPlanName('Gói Ăn ngon trọn tuần');
                     break;
                 default:
@@ -262,10 +262,19 @@ const CartPage = () => {
                                     <AlertCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
                                     <div>
                                         <h3 className="font-bold text-blue-900 mb-2">{planName}</h3>
-                                        <p className="text-sm text-blue-800">
-                                            Bạn đã chọn <span className="font-bold">{dishItems.length}/{totalMeals}</span> món ăn cho gói này
-                                        </p>
-                                        {dishItems.length < totalMeals && (
+
+                                        {totalMeals === 100 ? (
+                                            <p className="text-sm text-blue-800">
+                                                Bạn có thể chọn <span className="font-bold">không giới hạn món</span>
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm text-blue-800">
+                                                Bạn có thể chọn tối đa <span className="font-bold">{totalMeals}</span> món —
+                                                hiện đã chọn <span className="font-bold">{dishItems.length}</span> món
+                                            </p>
+                                        )}
+
+                                        {totalMeals !== 100 && dishItems.length < totalMeals && (
                                             <p className="text-sm text-blue-700 mt-1">
                                                 Còn thiếu {totalMeals - dishItems.length} món nữa để đủ gói
                                             </p>
@@ -274,6 +283,7 @@ const CartPage = () => {
                                 </div>
                             </div>
                         )}
+
                     </div>
 
                     {/* Right Column - Order Summary */}

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: 'ANBOX - Meal Subscription Service',
   description: 'Dịch vụ đăng ký bữa ăn lành mạnh, tiện lợi và ngon miệng.',
   icons: {
-    icon: '/logo.png',
+    icon: '/logo_2.png',
   },
 };
 

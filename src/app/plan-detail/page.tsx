@@ -5,7 +5,7 @@ export default function MealPlansPage() {
     const mealPlans = [
         {
             title: "Bữa lẻ theo ngày",
-            description: "Đặt món theo bữa",
+            description: "Đặt món theo bữa (Không giới hạn món)",
             details: [
                 "Phù hợp: gia đình bận rộn cần 1–2 bữa nhanh/ngày, thử món trước khi vào Meal Plan.",
                 "Bao gồm: 1 bộ nguyên liệu + công thức chi tiết (2–4 khẩu phần tuỳ chọn).",
