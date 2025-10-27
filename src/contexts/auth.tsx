@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthResponse, User } from '@/types/auth';
 import Loading from '@/components/Loading';
+import { useCart } from './cartContext';
 
 interface AuthContextType {
   user: User | null;
@@ -19,7 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { clearCart } = useCart()
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -74,6 +75,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('weekly_menu_cart');
+        localStorage.removeItem('weekly_menu_maxMeals');
+        clearCart()
       } catch (error) {
       }
     }
