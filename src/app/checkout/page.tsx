@@ -382,16 +382,16 @@ const CheckoutPage = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 mb-6">
+                            <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 mb-6">
                                 <div className="flex items-center gap-2 mb-4">
                                     <CreditCard className="w-5 h-5 text-orange-600" />
                                     <h3 className="font-bold text-gray-800">Thanh Toán QR Code</h3>
                                 </div>
 
-                                <div className="bg-white p-4 rounded-lg mb-4">
-                                    <div className="w-full aspect-square bg-gray-200 rounded-lg flex flex-col items-center justify-center ">
+                                <div className="bg-white p-2 rounded-lg mb-4 ">
+                                    <div className="w-full aspect-square bg-gray-200 rounded-lg flex flex-col items-center justify-center h-[350px]">
                                         <img
-                                            src="/Qr.jpg"
+                                            src="/Qr.png"
                                             alt="QR Code thanh toán"
                                             className="w-full h-full "
                                         />
