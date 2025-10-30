@@ -22,6 +22,11 @@ class MenuService {
         const response: AxiosResponse<Recipe[]> = await axiosInstance.get("/recipes/top-selling");
         return response.data;
     }
+
+     async getListFilter(data: any): Promise<Recipe[]> {
+        const response: AxiosResponse<Recipe[]> = await axiosInstance.post("/recipes/filter", data );
+        return response.data;
+    }
 }
 
 export default new MenuService();

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Clock, ChefHat, Flame, Leaf, Filter, X, Users, Loader2 } from 'lucide-react';
+import { Search, Clock, ChefHat, Flame, Leaf, Filter, X, Users, Loader2, Sparkles } from 'lucide-react'; // Thêm Sparkles
 import { RecipeCard } from '@/components/menu/RecipeCard';
 import { Recipe } from '@/types/menu';
 import MenuService from '@/service/menuService';
@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { useCart } from '@/contexts/cartContext';
 import { useAuth } from '@/contexts/auth';
 import { RecipeModal } from '@/components/Recipe/RecipeModal';
+import { AISuggestionModal } from '@/components/AI/AISuggestMadal';
 
 const MenuPage = () => {
     const [sampleRecipes, setSampleRecipes] = useState<Recipe[]>([]);
@@ -17,6 +18,8 @@ const MenuPage = () => {
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const { isAuthenticated } = useAuth();
+    const [showAIModal, setShowAIModal] = useState(false);
+
     const { addItem } = useCart();
 
     useEffect(() => {
@@ -34,6 +37,23 @@ const MenuPage = () => {
 
         fetchRecipes();
     }, []);
+
+    const handleAISearch = async (preferences: any) => {
+        const filteredPrefs = {
+            favorites: preferences.favorites,
+            goal: preferences.goal,
+        }
+        setIsLoading(true);
+        try {
+            const results = await MenuService.getListFilter(filteredPrefs);
+            setSampleRecipes(results);
+        } catch (error) {
+            toast.error('Không thể tìm kiếm. Vui lòng thử lại.');
+        } finally {
+            setIsLoading(false);
+            setShowAIModal(false);
+        }
+    };
 
     const handleAddToCart = (recipe: Recipe, servings: '1' | '2' | '4') => {
         if (!isAuthenticated) {
@@ -82,6 +102,15 @@ const MenuPage = () => {
                                 disabled={isLoading}
                             />
                         </div>
+
+                        {/* THÊM NÚT NÀY */}
+                        <button
+                            onClick={() => setShowAIModal(true)}
+                            className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl"
+                        >
+                            <Sparkles className="w-5 h-5" />
+                            <span>Gợi ý AI</span>
+                        </button>
 
                         <div className="flex gap-2">
                             {categories.map((cat, index) => {
@@ -151,6 +180,11 @@ const MenuPage = () => {
                 recipe={selectedRecipe}
                 onClose={() => setSelectedRecipe(null)}
                 onAddToCart={handleAddToCart}
+            />
+            <AISuggestionModal
+                isOpen={showAIModal}
+                onClose={() => setShowAIModal(false)}
+                onSearch={handleAISearch}
             />
         </div>
     );
